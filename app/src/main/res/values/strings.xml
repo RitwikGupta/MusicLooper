@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MusicLooper</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Buttons -->
+    <string name="choose_music">Choose music file</string>
+    <string name="loop_button">Loop!</string>
+
+    <!-- Steps -->
+    <string name="step1">Step 1: Choose a song</string>
+    <string name="step2">Step 2: Enter the start time (sec)</string>
+    <string name="step3">Step 3: Enter the end time (sec)</string>
+</resources>
