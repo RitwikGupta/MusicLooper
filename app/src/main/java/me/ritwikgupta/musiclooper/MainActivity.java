@@ -1,5 +1,8 @@
 package me.ritwikgupta.musiclooper;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     Uri musicFile;
+    int REQUEST_DIRECTORY = 100;
+    String file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Add file select dialog here
+                Intent intent = new Intent(getBaseContext(), FilePickerActivity.class);
+                startActivityForResult(intent, REQUEST_DIRECTORY);
             }
         });
 
@@ -68,4 +76,26 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_DIRECTORY && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
+                ClipData clip = data.getClipData();
+
+                if (clip != null) {
+                    for (int i = 0; i < clip.getItemCount(); i++) {
+                        musicFile = clip.getItemAt(i).getUri();
+                    }
+                    Toast.makeText(getBaseContext(), musicFile.toString(), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                musicFile = data.getData();
+                Toast.makeText(getBaseContext(), "Selected file!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
