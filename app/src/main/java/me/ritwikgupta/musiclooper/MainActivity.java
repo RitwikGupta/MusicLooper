@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Make sure a file is selected, and both times are set
-                if(musicFile != null && Integer.parseInt(startTime.getText().toString()) > 0 && Integer.parseInt(endTime.getText().toString()) > 0) {
+                if(musicFile != null && startTime.getText().toString().length() > 0 && endTime.getText().toString().length() > 0) {
                     // Do music stuff here
+                    Toast.makeText(getBaseContext(), "Music play here", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getBaseContext(), "You are missing a step", Toast.LENGTH_SHORT).show();
                 }
