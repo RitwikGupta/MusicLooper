@@ -3,6 +3,7 @@ package me.ritwikgupta.musiclooper;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,16 +19,18 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 public class MainActivity extends AppCompatActivity {
 
     Uri musicFile;
+    MediaPlayer mediaPlayer;
     int REQUEST_DIRECTORY = 100;
-    String file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Music Looper");
 
         Button choose = (Button) findViewById(R.id.choose_button);
         Button loop = (Button) findViewById(R.id.loop_button);
+        Button stop = (Button) findViewById(R.id.stop_button);
         final EditText startTime = (EditText) findViewById(R.id.start_time);
         final EditText endTime = (EditText) findViewById(R.id.end_time);
 
@@ -49,11 +52,27 @@ public class MainActivity extends AppCompatActivity {
                 if(musicFile != null && startTime.getText().toString().length() > 0 && endTime.getText().toString().length() > 0) {
                     // Do music stuff here
                     Toast.makeText(getBaseContext(), "Music play here", Toast.LENGTH_SHORT).show();
+                    mediaPlayer.create(getBaseContext(), musicFile);
+                    mediaPlayer.setLooping(true);
+                    mediaPlayer.start();
                 } else {
                     Toast.makeText(getBaseContext(), "You are missing a step", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+        // What happens when the stop button is clicked
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                } else {
+                    Toast.makeText(getBaseContext(), "No media playing", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     @Override

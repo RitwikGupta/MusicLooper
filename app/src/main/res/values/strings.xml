@@ -7,6 +7,7 @@
     <!-- Buttons -->
     <string name="choose_music">Choose music file</string>
     <string name="loop_button">Loop!</string>
+    <string name="stop_button">Stop!</string>
 
     <!-- Steps -->
     <string name="step1">Step 1: Choose a song</string>
