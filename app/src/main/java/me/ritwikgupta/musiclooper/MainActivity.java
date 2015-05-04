@@ -3,6 +3,7 @@ package me.ritwikgupta.musiclooper;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nononsenseapps.filepicker.FilePickerActivity;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,24 +54,45 @@ public class MainActivity extends AppCompatActivity {
                 //Make sure a file is selected, and both times are set
                 if(musicFile != null && startTime.getText().toString().length() > 0 && endTime.getText().toString().length() > 0) {
                     // Do music stuff here
-                    Toast.makeText(getBaseContext(), "Music play here", Toast.LENGTH_SHORT).show();
-                    mediaPlayer.create(getBaseContext(), musicFile);
-                    mediaPlayer.setLooping(true);
-                    mediaPlayer.start();
+
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        Toast.makeText(getBaseContext(), "Media is already playing", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    mediaPlayer = new MediaPlayer();
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    try {
+                        mediaPlayer.setDataSource(getApplicationContext(), musicFile);
+                    } catch(IOException e) {
+                        Toast.makeText(getBaseContext(), "File exists, but isn't working?", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if(mediaPlayer != null) {
+                        try {
+                            mediaPlayer.prepare();
+                            mediaPlayer.setLooping(true);
+                            mediaPlayer.seekTo(Integer.parseInt(startTime.getText().toString()) * 1000);
+                            mediaPlayer.start();
+                        } catch (IOException e){
+                            Toast.makeText(getBaseContext(), "Not prepared", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getBaseContext(), musicFile.toString(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getBaseContext(), "You are missing a step", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // What happens when the stop button is clicked
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying()) {
+                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 } else {
-                    Toast.makeText(getBaseContext(), "No media playing", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "No music is playing", Toast.LENGTH_SHORT).show();
                 }
             }
         });

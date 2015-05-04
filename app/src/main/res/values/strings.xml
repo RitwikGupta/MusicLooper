@@ -13,4 +13,5 @@
     <string name="step1">Step 1: Choose a song</string>
     <string name="step2">Step 2: Enter the start time (sec)</string>
     <string name="step3">Step 3: Enter the end time (sec)</string>
+    <string name="title_activity_waveform">WaveformActivity</string>
 </resources>
