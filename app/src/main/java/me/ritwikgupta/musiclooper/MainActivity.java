@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -53,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Make sure a file is selected, and both times are set
                 if(musicFile != null && startTime.getText().toString().length() > 0 && endTime.getText().toString().length() > 0) {
-                    // Do music stuff here
+                    final int start = Integer.parseInt(startTime.getText().toString());
+                    final int end = Integer.parseInt(endTime.getText().toString());
 
+                    // Do music stuff here
                     if(mediaPlayer != null && mediaPlayer.isPlaying()) {
                         Toast.makeText(getBaseContext(), "Media is already playing", Toast.LENGTH_SHORT).show();
                         return;
@@ -72,8 +75,12 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             mediaPlayer.prepare();
                             mediaPlayer.setLooping(true);
-                            mediaPlayer.seekTo(Integer.parseInt(startTime.getText().toString()) * 1000);
+                            mediaPlayer.seekTo(start * 1000);
                             mediaPlayer.start();
+
+                            // Non UI-blocking while loop in AsyncTask
+                            new Loop().execute(new Integer[]{start, end});
+
                         } catch (IOException e){
                             Toast.makeText(getBaseContext(), "Not prepared", Toast.LENGTH_SHORT).show();
                         }
@@ -89,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer != null && mediaPlayer.isPlaying()) {
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 } else {
                     Toast.makeText(getBaseContext(), "No music is playing", Toast.LENGTH_SHORT).show();
@@ -115,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(getBaseContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -139,6 +147,23 @@ public class MainActivity extends AppCompatActivity {
                 musicFile = data.getData();
                 Toast.makeText(getBaseContext(), "Selected file!", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private class Loop extends AsyncTask<Integer, Void, Void> {
+
+        public Void doInBackground(Integer... params) {
+
+            // params[0] is start
+            // params[1] is end
+
+            while(mediaPlayer.isLooping()) {
+                if(mediaPlayer.getCurrentPosition() >= params[1] * 1000) {
+                    mediaPlayer.seekTo(params[0] * 1000);
+                }
+            }
+
+            return null;
         }
     }
 
